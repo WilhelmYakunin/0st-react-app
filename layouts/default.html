@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://npmcdn.com/react@15.3.0/dist/react.js"></script>
+    <script src="https://npmcdn.com/react-dom@15.3.0/dist/react-dom.js"></script>
+    <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
+    <script src="https://npmcdn.com/jquery@3.1.0/dist/jquery.min.js"></script>
+    <script src="https://npmcdn.com/remarkable@1.6.2/dist/remarkable.min.js"></script>
+    		
+	<title>traning React.JS & Bootstrap application</title>
+  </head>
+<body>
+
+	<div class="container-fluid" id="content">
+	</div>
+
+	<script type="text/babel">
+	
+		'use strict';
+	
+			class App extends React.Component {
+	
+				constructor() {
+					super();
+					
+					this.state = {
+						total: 0,
+						products: [
+						{item: 'eggs', amount: 1, price: 2, saved: 1},
+						{item: 'sugar', amount: 1, price: 1, saved: 1},
+						{item: 'bread', amount: 1, price: 0.5, saved: 1}
+						]
+										
+					};
+					const invisible = 'display: none';
+				}
+		
+				handleClearCart(event) {
+					this.state.products.splice(0);
+					this.setState({products: this.state.products});
+					this.setState({total: 0});
+	
+				}
+	
+				showChangeContainer(index, item) {
+									
+					const primaryButtons = document.getElementById(index);
+					primaryButtons.style.display = 'none';
+	
+					const changeContainer = document.getElementById(item);
+					changeContainer.style.display = 'inline-block';
+	
+					event.preventDefault();
+				}
+	
+				addOne(index) {
+					
+					this.state.products[index].saved += 1;	
+					this.setState({products: this.state.products});
+	
+				}
+	
+				decreaseByOne(index) {
+					
+					this.state.products[index].saved -= 1;	
+					this.setState({products: this.state.products});
+	
+				}
+	
+				removeItem(index) {
+					
+					this.state.products.splice(index, 1);
+					this.setState({products: this.state.products});
+					
+				}
+	
+				cancel(index, item) {
+					
+					const primaryButtons = document.getElementById(index);
+					primaryButtons.style.display = 'inline-block';
+	
+					const changeContainer = document.getElementById(item);
+					changeContainer.style.display = 'none';
+					
+					this.state.products[index].saved = this.state.products[index].amount;
+					this.setState({products: this.state.products});
+	
+					event.preventDefault();
+	
+				}
+	
+				save(index, item) {
+	
+					const primaryButtons = document.getElementById(index);
+					primaryButtons.style.display = 'inline-block';
+	
+					const changeContainer = document.getElementById(item);
+					changeContainer.style.display = 'none';
+	
+					this.state.products[index].amount = this.state.products[index].saved;	
+					this.setState({products: this.state.products});
+	
+					event.preventDefault();
+	
+				}
+					
+				render() {
+	
+					const list = this.state.products.map(({item, amount, price}, index) => {
+	
+						const sumOfItem = amount + ' x ' + '$' + price + ' = ' 
+						+ '$' + (Number(amount) * Number(price));
+						
+	
+						return <li className="list-unstyled" key={index}>
+									<h2>{item}</h2>
+									<p>{sumOfItem}</p>
+									
+									<div id={item} style={{display: "none"}} 
+									className="show-change-container">
+										Quantaty: 
+										<input value={this.state.products[index].saved} />
+										<button className="btn btn-outline-success btn-md"
+										onClick={this.addOne.bind(this, index)}>
+										Add one</button>
+										<button className="btn btn-outline-success btn-md"
+										onClick={this.decreaseByOne.bind(this, index)}>
+										Decrease by one</button>
+										<button className="btn btn-outline-success btn-md"
+										onClick={this.save.bind(this, index, item)}>
+										Save</button>
+										<button className="btn btn-outline-success btn-md"
+										onClick={this.cancel.bind(this, index, item)}>
+										Cancel</button>
+									</div>
+	
+									<div id={index} className="primary-buttons">
+										<button className="btn btn-outline-success btn-md"
+										onClick={this.showChangeContainer.bind(this, index, item)}>
+										Change quantaty
+										</button>
+	
+										<button onClick={this.removeItem.bind(this, index)}
+										className="btn btn-outline-success btn-md">Remove
+										</button>
+									</div>
+								</li>
+					})
+	
+								
+					return <div className="container p-3 my-3 bg-dark text-white">
+						<h1>Shopping cart</h1>
+						<p>Numbers of items: {this.state.products.reduce(function(sum, current) {
+							return sum + current.amount;
+						}, 0)}</p>
+						<p>Total: ${this.state.products.reduce(function(sum, current) {
+							return sum + (current.amount * current.price);
+						}, 0)}</p>
+						<button type="button" className="btn btn-outline-success btn-lg" 
+						onClick={this.handleClearCart.bind(this)}
+						>
+						Clear the shopping cart
+						</button>
+	
+						<ul className="list-group list-group-flush">
+							{list}
+						</ul>
+	
+	
+					</div>;
+				}
+			}
+	
+			ReactDOM.render(
+				<App />,
+				document.getElementById('content')
+			);
+		
+		</script>
+</body>
+</html>
